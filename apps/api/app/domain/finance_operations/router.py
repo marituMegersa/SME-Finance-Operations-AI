@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
-from app.db.session import get_db
-from app.domain.finance_operations.schemas import FinanceOperationsRequest, FinanceOperationsResponse
+from fastapi import APIRouter, status
+from pydantic import BaseModel
+from app.domain.finance_operations.service import FinanceOperationsService
 
-router = APIRouter(prefix="/api/v1/finance_operations", tags=["SME Finance & Cash Flow Operations Domain"])
+router = APIRouter(prefix="/api/v1/finance_operations", tags=["Finance Operations"])
 
-@router.post("/process", response_model=FinanceOperationsResponse, status_code=status.HTTP_201_CREATED)
-def process_domain_request(data: FinanceOperationsRequest, db: Session = Depends(get_db)):
-    return FinanceOperationsResponse(
-        id="REC-8821",
-        status="COMPLETED",
-        summary=f"Processed {data} for SME Finance & Cash Flow Operations",
-        confidence_score=0.99,
-        created_at="2026-09-10T16:00:00Z"
-    )
+class LoanInput(BaseModel):
+    sme_account_id: str
+    monthly_revenue: float
+    monthly_expense: float
+    outstanding_invoices_amount: float
+
+@router.post("/underwrite", status_code=status.HTTP_200_OK)
+def underwrite_loan(data: LoanInput):
+    return FinanceOperationsService.underwrite_loan(data.sme_account_id, data.monthly_revenue, data.monthly_expense, data.outstanding_invoices_amount)
