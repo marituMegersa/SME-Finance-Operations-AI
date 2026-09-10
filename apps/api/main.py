@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.domain.finance_operations.router import router as domain_router
 
-app = FastAPI(title="SME-Finance-Operations-AI API", description="Python FastAPI Backend for SME-Finance-Operations-AI", version="1.0.0")
+app = FastAPI(title="SME Finance & Cash Flow Operations API", description="Cash Flow Forecasting & Automated Micro-Loan Underwriter", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,4 +16,4 @@ app.include_router(domain_router)
 
 @app.get("/health")
 def health():
-    return {"status": "healthy", "service": "SME-Finance-Operations-AI"}
+    return {"status": "healthy", "service": "SME Finance & Cash Flow Operations"}
