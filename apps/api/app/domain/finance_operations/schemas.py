@@ -1,21 +1,16 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-class FinanceOperationsRequest(BaseModel):
+class UnderwritingEvalRequest(BaseModel):
+    enterprise_id: str = Field(..., example="SME-ET-9921")
+    monthly_revenue: float = Field(..., ge=0, example=450000.0)
+    monthly_expenses: float = Field(..., ge=0, example=280000.0)
+    requested_loan: float = Field(..., ge=0, example=100000.0)
 
-    sme_account_id: str
-    monthly_revenue: float
-    monthly_expense: float
-    outstanding_invoices_amount: float
-
-
-class FinanceOperationsResponse(BaseModel):
-    id: str
-    status: str = "COMPLETED"
-    summary: str
-    confidence_score: float = 0.98
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+class UnderwritingEvalResponse(BaseModel):
+    enterprise_id: str
+    monthly_net_cash_flow: float
+    dscr_ratio: float
+    underwriting_status: str
+    max_credit_facility: float
+    evaluated_at: datetime = Field(default_factory=datetime.utcnow)
