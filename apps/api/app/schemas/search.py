@@ -14,3 +14,5 @@ class PaginatedFinanceResponse(BaseModel):
     page: int
     page_size: int
     total_pages: int
+
+# Search & Pagination Criteria Filter
