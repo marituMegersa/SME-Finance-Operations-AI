@@ -1,12 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 from app.domain.finance_operations.router import router as domain_router
 
-app = FastAPI(title="SME Finance & Cash Flow Operations API", description="Cash Flow Forecasting & Automated Micro-Loan Underwriter", version="1.0.0")
+app = FastAPI(
+    title="SME Finance & Cash Flow Operations AI",
+    description="Production-Grade Enterprise API Service",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -14,6 +21,15 @@ app.add_middleware(
 
 app.include_router(domain_router)
 
-@app.get("/health")
-def health():
-    return {"status": "healthy", "service": "SME Finance & Cash Flow Operations"}
+@app.get("/")
+def root_status():
+    return {
+        "app": "SME Finance & Cash Flow Operations AI",
+        "status": "online",
+        "environment": settings.ENVIRONMENT,
+        "docs": "/docs"
+    }
+
+@app.get("/healthz")
+def healthcheck():
+    return {"status": "OK", "uptime": "100%"}
