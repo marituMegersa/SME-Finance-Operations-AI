@@ -42,3 +42,5 @@ class FinanceOperationsService:
 
     async def list_ledger(self, skip: int = 0, limit: int = 50) -> List[FinanceOperationsRecord]:
         return await self.repo.get_multi(skip=skip, limit=limit)
+
+# Business logic & AI engine orchestrator
