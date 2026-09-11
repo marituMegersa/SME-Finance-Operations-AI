@@ -1,15 +1,14 @@
-from fastapi import APIRouter, Depends, status, Query
-from sqlalchemy.orm import Session
-from app.db.session import get_db
-from app.domain.finance_operations.schemas import UnderwritingEvalRequest, UnderwritingEvalResponse
-from app.domain.finance_operations.service import FinanceOperationsService
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.session import get_async_db
+from app.domain.finance_operations.service import FinanceUnderwritingLangGraphService
 
-router = APIRouter(prefix="/api/v1/finance_operations", tags=["Credit Underwriting & Cash Flow"])
+router = APIRouter(prefix="/api/v1/finance_operations", tags=["SME Finance & Cash Flow Operations AI"])
 
-@router.post("/underwrite", response_model=UnderwritingEvalResponse, status_code=status.HTTP_201_CREATED)
-def evaluate_underwriting(req: UnderwritingEvalRequest, db: Session = Depends(get_db)):
-    return FinanceOperationsService.underwrite_and_store(db, req)
+@router.get("/healthz")
+async def async_health_check():
+    return {"status": "healthy", "architecture": "Async SQLAlchemy + LangGraph + Redis + Elasticsearch"}
 
-@router.get("/ledger")
-def list_finance_records(skip: int = Query(0, ge=0), limit: int = Query(50, le=100), db: Session = Depends(get_db)):
-    return FinanceOperationsService.list_records(db, skip=skip, limit=limit)
+@router.post("/agentic-eval")
+async def run_agentic_eval(payload: dict, db: AsyncSession = Depends(get_async_db)):
+    return await FinanceUnderwritingLangGraphService.evaluate_async(db, payload)
