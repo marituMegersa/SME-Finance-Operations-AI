@@ -1,18 +1,11 @@
-import uvicorn
-
-from app.db.base import Base
-from app.db.session import engine
-import app.db.models
-
-Base.metadata.create_all(bind=engine)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.domain.finance_operations.router import router as domain_router
+from app.api.v1.router import api_router
 
 app = FastAPI(
-    title="SME Finance & Cash Flow Operations AI",
-    description="Production-Grade Enterprise API Service",
+    title="SME Finance Operations AI",
+    description="Clean Architecture Enterprise FastAPI Engine",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -26,21 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(domain_router)
-
-@app.get("/")
-def root_status():
-    return {
-        "app": "SME Finance & Cash Flow Operations AI",
-        "status": "online",
-        "environment": settings.ENVIRONMENT,
-        "docs": "/docs"
-    }
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/healthz")
-def healthcheck():
-    return {"status": "OK", "uptime": "100%"}
-
+async def health_check():
+    return {"status": "healthy", "architecture": "Clean Layered Architecture (api, schemas, models, repositories, services, core, utils)"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8004, reload=False)
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
