@@ -11,4 +11,4 @@ class FinanceOperationsRecord(Base):
     monthly_expenses = Column(Float, nullable=False)
     dscr_ratio = Column(Float, default=1.0)
     underwriting_status = Column(String, default="PENDING")
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
